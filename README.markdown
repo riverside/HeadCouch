@@ -3,6 +3,8 @@ HeadCouch
 
 Version 0.1.0
 
+### Server ###
+
     <?php
     require_once 'HeadCouch.php';
 
@@ -29,4 +31,52 @@ Version 0.1.0
 
     // Returns the statistics for the running server
     $result = HeadCouchServer::newInstance()->stats();
+    ?>
+
+### Database ###
+
+    <?php
+    require_once 'HeadCouch.php';
+    
+    // Create database
+    $result = HeadCouchDatabase::newInstance('db_name')->create();
+
+    // Delete database
+    $result = HeadCouchDatabase::newInstance('db_name')->delete();
+
+    // Gets information about the specified database
+    $result = HeadCouchDatabase::newInstance('db_name')->get();
+
+    // Returns the HTTP Headers about the specified database
+    $result = HeadCouchDatabase::newInstance('db_name')->head();
+
+    // Creates a new document in the specified database
+    $result = HeadCouchDatabase::newInstance('db_name')->post(array(
+        'key1' => 'val1', 
+        'key2' => 'val2'
+    ));
+    ?>
+
+### Document ###
+
+    <?php
+    require_once 'HeadCouch.php';
+
+    // Creates a new document
+    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->create(array(
+        'key1' => 'val1', 
+        'key2' => 'val2'
+    ));
+
+    // Deletes the specified document from the database
+    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->delete();
+
+    // Returns document
+    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->get();
+
+    // Returns document's revision token
+    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->getRevision();
+
+    // Returns the HTTP Headers about the specified document
+    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->head();
     ?>
