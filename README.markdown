@@ -37,47 +37,50 @@ $result = HeadCouchServer::newInstance()->stats();
 ?>
 ```
 #### Database
-    <?php
-    require_once 'HeadCouch.php';
-    
-    // Create database
-    $result = HeadCouchDatabase::newInstance('db_name')->create();
+```php
+<?php
+require_once 'HeadCouch.php';
 
-    // Delete database
-    $result = HeadCouchDatabase::newInstance('db_name')->delete();
+// Create database
+$result = HeadCouchDatabase::newInstance('db_name')->create();
 
-    // Gets information about the specified database
-    $result = HeadCouchDatabase::newInstance('db_name')->get();
+// Delete database
+$result = HeadCouchDatabase::newInstance('db_name')->delete();
 
-    // Returns the HTTP Headers about the specified database
-    $result = HeadCouchDatabase::newInstance('db_name')->head();
+// Gets information about the specified database
+$result = HeadCouchDatabase::newInstance('db_name')->get();
 
-    // Creates a new document in the specified database
-    $result = HeadCouchDatabase::newInstance('db_name')->post(array(
-        'key1' => 'val1', 
-        'key2' => 'val2'
-    ));
-    ?>
+// Returns the HTTP Headers about the specified database
+$result = HeadCouchDatabase::newInstance('db_name')->head();
 
+// Creates a new document in the specified database
+$result = HeadCouchDatabase::newInstance('db_name')->post(array(
+    'key1' => 'val1', 
+    'key2' => 'val2'
+));
+?>
+```
 #### Document
-    <?php
-    require_once 'HeadCouch.php';
+```php
+<?php
+require_once 'HeadCouch.php';
 
-    // Creates a new document
-    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->create(array(
-        'key1' => 'val1', 
-        'key2' => 'val2'
-    ));
+// Creates a new document
+$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->create(array(
+    'key1' => 'val1', 
+    'key2' => 'val2'
+));
 
-    // Deletes the specified document from the database
-    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->delete();
+// Deletes the specified document from the database
+$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->delete();
 
-    // Returns document
-    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->get();
+// Returns document
+$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->get();
 
-    // Returns document's revision token
-    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->getRevision();
+// Returns document's revision token
+$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->getRevision();
 
-    // Returns the HTTP Headers about the specified document
-    $result = HeadCouchDocument::newInstance('db_name', 'doc_name')->head();
-    ?>
+// Returns the HTTP Headers about the specified document
+$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->head();
+?>
+```
