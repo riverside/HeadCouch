@@ -1,6 +1,8 @@
 HeadCouch
 =========
+## CouchDB PHP client ##
 
+http://zinoui.com/
 Version 0.1.0
 
 ### Server ###
