@@ -5,68 +5,85 @@ if (isset($_GET['do']))
 	
 	$data = array('key1'=>'val1', 'key2' => 'val2', 'key3' => 'val3');
 	
+	$transport = HeadCouchSocket::newInstance($_GET['host'], $_GET['port'])
+		->setUsername($_GET['user'])
+		->setPassword($_GET['pswd'])
+	;
+	
+	$server = HeadCouchServer::newInstance($transport);
+	
+	if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb')))
+	{
+		$database = HeadCouchDatabase::newInstance($transport, @$_GET['dbName']);
+	}
+	
+	if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb', 'createDoc', 'deleteDoc', 'getDoc', 'getDocRev', 'headDoc')))
+	{
+		$document = HeadCouchDocument::newInstance($transport, @$_GET['dbName'], @$_GET['docName']);
+	}
+	
 	switch ($_GET['do'])
 	{
 		# Server
 		case 'ping':
-			$r = HeadCouchServer::newInstance()->ping();
+			$r = $server->ping();
 			break;
 		case 'uuid':
-			$r = HeadCouchServer::newInstance()->uuid();
+			$r = $server->uuid();
 			break;
 		case 'allDbs':
-			$r = HeadCouchServer::newInstance()->allDbs();
+			$r = $server->allDbs();
 			break;
 		case 'activeTasks':
-			$r = HeadCouchServer::newInstance()->activeTasks();
+			$r = $server->activeTasks();
 			break;
 		case 'dbUpdates':
-			$r = HeadCouchServer::newInstance()->dbUpdates();
+			$r = $server->dbUpdates();
 			break;
 		case 'log':
-			$r = HeadCouchServer::newInstance()->log();
+			$r = $server->log();
 			break;
 		case 'restart':
-			$r = HeadCouchServer::newInstance()->restart();
+			$r = $server->restart();
 			break;
 		case 'stats':
-			$r = HeadCouchServer::newInstance()->stats();
+			$r = $server->stats();
 			break;
 		# Database
 		case 'createDb':
-			$r = HeadCouchDatabase::newInstance($_GET['dbName'])->create();
+			$r = $database->create();
 			break;
 		case 'deleteDb':
-			$r = HeadCouchDatabase::newInstance($_GET['dbName'])->delete();
+			$r = $database->delete();
 			break;
 		case 'getDb':
-			$r = HeadCouchDatabase::newInstance($_GET['dbName'])->get();
+			$r = $database->get();
 			break;
 		case 'headDb':
-			$r = HeadCouchDatabase::newInstance($_GET['dbName'])->head();
+			$r = $database->head();
 			break;
 		case 'postDb':
-			$r = HeadCouchDatabase::newInstance($_GET['dbName'])->post($data);
+			$r = $database->post($data);
 			break;
 		# Document
 		case 'createDoc':
-			$r = HeadCouchDocument::newInstance($_GET['dbName'], $_GET['docName'])->create($data);
+			$r = $document->create($data);
 			break;
 		case 'deleteDoc':
-			$r = HeadCouchDocument::newInstance($_GET['dbName'], $_GET['docName'])->delete($_GET['docRev']);
+			$r = $document->delete($_GET['docRev']);
 			break;
 		case 'getDoc':
-			$r = HeadCouchDocument::newInstance($_GET['dbName'], $_GET['docName'])->get();
+			$r = $document->get();
 			break;
 		case 'getDocRev':
-			$r = HeadCouchDocument::newInstance($_GET['dbName'], $_GET['docName'])->getRevision();
+			$r = $document->getRevision();
 			break;
 		case 'headDoc':
-			$r = HeadCouchDocument::newInstance($_GET['dbName'], $_GET['docName'])->head();
+			$r = $document->head();
 			break;
 	}
 	
-	?><a href="test.php">Return back</a><?php
+	?><a href="<?php echo $_SERVER['PHP_SELF']; ?>">Return back</a><?php
 	
 	echo '<pre>';
 	print_r(json_decode($r));
@@ -97,6 +114,8 @@ if (isset($_GET['do']))
 				<legend>General</legend>
 				<label>Host: <input type="text" name="host" value="127.0.0.1" /></label>
 				<label>Port: <input type="text" name="port" value="5984" /></label>
+				<label>Username: <input type="text" name="user" value="root" /></label>
+				<label>Password: <input type="text" name="pswd" value="1" /></label>
 				<label>Database: <input type="text" name="dbName" /></label>
 			</fieldset>
 			<fieldset style="float: left; width: 30%">

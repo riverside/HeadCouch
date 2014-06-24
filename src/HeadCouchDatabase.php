@@ -1,13 +1,12 @@
 <?php
 require_once "HeadCouchException.php";
-require_once "HeadCouchHttp.php";
 /**
  * CouchDB database wrapper
  *
- * @author Dimitar Ivnaov (http://twitter.com/DimitarIvanov)
+ * @author Dimitar Ivanov (http://twitter.com/DimitarIvanov)
  * @link http://github.com/riverside/HeadCouch
  * @license MIT
- * @version 0.1.0
+ * @version 0.1.1
  * @package HeadCouch
  */
 class HeadCouchDatabase
@@ -19,27 +18,26 @@ class HeadCouchDatabase
  */
     private $db;
 /**
- * Instance of the HTTP Client
+ * Instance of the transport
  *
  * @var mixed
  */
-    private $http;
+    private $transport;
 /**
  * Constructor
  *
+ * @param object $transport
  * @param string $db
- * @param string $host
- * @param number $port
  * @throws HeadCouchException
  */
-    public function __construct($db, $host=NULL, $port=NULL)
+    public function __construct($transport, $db)
     {
         if (empty($db))
         {
             throw new HeadCouchException("\$db could not be empty.");
         }
         $this->db = $db;
-        $this->http = HeadCouchHttp::newInstance($host, $port);
+        $this->transport = $transport;
     }
 /**
  * Creates a new database.
@@ -48,9 +46,26 @@ class HeadCouchDatabase
  */
     public function create()
     {
-        $this->http->setMethod("PUT")->request($this->db);
+        $this->transport->setMethod("PUT")->request($this->db);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
+    }
+/**
+ * Get/set database name
+ *
+ * @param string $dbName
+ * @return string|HeadCouchDatabase
+ */
+    public function db($dbName=NULL)
+    {
+    	if (is_null($dbName))
+    	{
+    		return $this->db;
+    	}
+    	
+    	$this->db = $dbName;
+    	
+    	return $this;
     }
 /**
  * Deletes the specified database, and all the documents
@@ -60,9 +75,9 @@ class HeadCouchDatabase
  */
     public function delete()
     {
-        $this->http->setMethod('DELETE')->request($this->db);
+        $this->transport->setMethod('DELETE')->request($this->db);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Gets information about the specified database.
@@ -71,9 +86,9 @@ class HeadCouchDatabase
  */
     public function get()
     {
-        $this->http->setMethod('GET')->request($this->db);
+        $this->transport->setMethod('GET')->request($this->db);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Returns the HTTP Headers containing a minimal amount
@@ -85,9 +100,9 @@ class HeadCouchDatabase
  */
     public function head()
     {
-    	$this->http->setMethod('HEAD')->request($this->db);
+    	$this->transport->setMethod('HEAD')->request($this->db);
     
-    	return json_encode($this->http->getResponseHeaders());
+    	return json_encode($this->transport->getResponseHeaders());
     }
 /**
  * Creates a new document in the specified database,
@@ -104,21 +119,20 @@ class HeadCouchDatabase
     	{
     		$qs = "?batch=ok";
     	}
-    	$this->http->setMethod('POST')->setData($data)->request($this->db . $qs);
+    	$this->transport->setMethod('POST')->setData($data)->request($this->db . $qs);
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Returns new instance of the HeadCouchDatabase
  *
+ * @param object $transport
  * @param string $db
- * @param string $host
- * @param number $port
  * @return HeadCouchDatabase
  */
-    static public function newInstance($db, $host=NULL, $port=NULL)
+    static public function newInstance($transport, $db)
     {
-        return new self($db, $host, $port);
+        return new self($transport, $db);
     }
 /**
  * A database purge permanently removes the references
@@ -129,9 +143,9 @@ class HeadCouchDatabase
  */
     public function purge($data)
     {
-    	$this->http->setMethod("POST")->setData($data)->request($this->db . "/_purge");
+    	$this->transport->setMethod("POST")->setData($data)->request($this->db . "/_purge");
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * With given a list of document revisions, returns the
@@ -142,9 +156,9 @@ class HeadCouchDatabase
  */
     public function missingRevs($data)
     {
-    	$this->http->setMethod("POST")->setData($data)->request($this->db . "/_missing_revs");
+    	$this->transport->setMethod("POST")->setData($data)->request($this->db . "/_missing_revs");
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Given a set of document/revision IDs, returns the subset
@@ -156,9 +170,9 @@ class HeadCouchDatabase
  */
     public function revsDiff($data)
     {
-    	$this->http->setMethod("POST")->setData($data)->request($this->db . "/_revs_diff");
+    	$this->transport->setMethod("POST")->setData($data)->request($this->db . "/_revs_diff");
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Gets the current revs_limit (revision limit) setting.
@@ -175,12 +189,12 @@ class HeadCouchDatabase
     {
     	if (is_null($limit))
     	{
-    		$this->http->setMethod("GET")->request($this->db . "/_revs_limit");
+    		$this->transport->setMethod("GET")->request($this->db . "/_revs_limit");
     	} else {
-    		$this->http->setMethod("PUT")->setData($limit)->request($this->db . "/_revs_limit");
+    		$this->transport->setMethod("PUT")->setData($limit)->request($this->db . "/_revs_limit");
     	}
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Returns the current security object from the specified database.
@@ -195,12 +209,12 @@ class HeadCouchDatabase
     {
     	if (empty($admins) && empty($members))
     	{
-    		$this->http->setMethod("GET")->request($this->db . "/_security");
+    		$this->transport->setMethod("GET")->request($this->db . "/_security");
     	} else {
-    		$this->http->setMethod("PUT")->setData(compact('admins', 'members'))->request($this->db . "/_security");
+    		$this->transport->setMethod("PUT")->setData(compact('admins', 'members'))->request($this->db . "/_security");
     	}
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Compacts the view indexes associated with the specified
@@ -220,9 +234,9 @@ class HeadCouchDatabase
     	{
     		$qs = "/" . $ddoc;
     	}
-    	$this->http->setMethod("POST")->request($this->db . "/_compact" . $qs);
+    	$this->transport->setMethod("POST")->request($this->db . "/_compact" . $qs);
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Commits any recent changes to the specified database to
@@ -237,9 +251,9 @@ class HeadCouchDatabase
  */
     public function ensureFullCommit()
     {
-    	$this->http->setMethod("POST")->request($this->db . "/_ensure_full_commit");
+    	$this->transport->setMethod("POST")->request($this->db . "/_ensure_full_commit");
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * Removes view index files that are no longer required by
@@ -253,9 +267,9 @@ class HeadCouchDatabase
  */
     public function viewCleanup()
     {
-    	$this->http->setMethod("POST")->request($this->db . "/_view_cleanup");
+    	$this->transport->setMethod("POST")->request($this->db . "/_view_cleanup");
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  *
@@ -281,12 +295,12 @@ class HeadCouchDatabase
     		}
    			$qs = empty($tmp) ? NULL : "?" . http_build_query($tmp);
     		
-    		$this->http->setMethod("GET")->request($this->db . "/_all_docs" . $qs);
+    		$this->transport->setMethod("GET")->request($this->db . "/_all_docs" . $qs);
     	} else {
-    		$this->http->setMethod("POST")->setData(compact('keys'))->request($this->db . "/_all_docs");
+    		$this->transport->setMethod("POST")->setData(compact('keys'))->request($this->db . "/_all_docs");
     	}
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 }
 ?>

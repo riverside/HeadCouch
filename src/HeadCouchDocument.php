@@ -1,13 +1,12 @@
 <?php
 require_once "HeadCouchException.php";
-require_once "HeadCouchHttp.php";
 /**
  * CouchDB document wrapper
  *
- * @author Dimitar Ivnaov (http://twitter.com/DimitarIvanov)
+ * @author Dimitar Ivanov (http://twitter.com/DimitarIvanov)
  * @link http://github.com/riverside/HeadCouch
  * @license MIT
- * @version 0.1.0
+ * @version 0.1.1
  * @package HeadCouch
  */
 class HeadCouchDocument
@@ -25,21 +24,20 @@ class HeadCouchDocument
  */
     private $document;
 /**
- * Instance of the HTTP client
+ * Instance of the transport
  *
  * @var mixed
  */
-    private $http;
+    private $transport;
 /**
  * Constructor
  *
+ * @param object $transport
  * @param string $db
  * @param string $document
- * @param string $host
- * @param number $port
  * @throws HeadCouchException
  */
-    public function __construct($db, $document=NULL, $host=NULL, $port=NULL)
+    public function __construct($transport, $db, $document=NULL)
     {
         if (empty($db))
         {
@@ -51,7 +49,7 @@ class HeadCouchDocument
         }
         $this->db = $db;
         $this->document = $document;
-        $this->http = HeadCouchHttp::newInstance($host, $port);
+        $this->transport = $transport;
     }
 /**
  * The COPY (which is non-standard HTTP) copies an existing
@@ -76,12 +74,12 @@ class HeadCouchDocument
     	{
     		$qs .= "&batch=ok";
     	}
-    	$this->http
+    	$this->transport
     		->setMethod('COPY')
     		->addHeader("Destination: " . $dest)
     		->request($this->db . "/" . $this->document . $qs);
     	
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
     }
 /**
  * The PUT method creates a new named document, or creates
@@ -99,9 +97,26 @@ class HeadCouchDocument
     	{
     		$qs = "?batch=ok";
     	}
-    	$this->http->setMethod("PUT")->setData($data)->request($this->db . "/" . $this->document . $qs);
+    	$this->transport->setMethod("PUT")->setData($data)->request($this->db . "/" . $this->document . $qs);
     
-    	return $this->http->getResponse();
+    	return $this->transport->getResponse();
+    }
+/**
+ * Get/set database name
+ *
+ * @param string $dbName
+ * @return string|HeadCouchDocument
+ */
+    public function db($dbName=NULL)
+    {
+    	if (is_null($dbName))
+    	{
+    		return $this->db;
+    	}
+    	 
+    	$this->db = $dbName;
+    	 
+    	return $this;
     }
 /**
  * Deletes the specified document from the database. You
@@ -122,9 +137,26 @@ class HeadCouchDocument
         {
         	$qs .= "&batch=ok";
         }
-        $this->http->setMethod('DELETE')->request($this->db . "/" . $this->document . $qs);
+        $this->transport->setMethod('DELETE')->request($this->db . "/" . $this->document . $qs);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
+    }
+/**
+ * Get/set document name
+ *
+ * @param string $docName
+ * @return string|HeadCouchDocument
+ */
+    public function doc($docName=NULL)
+    {
+    	if (is_null($docName))
+    	{
+    		return $this->document;
+    	}
+    	 
+    	$this->document = $docName;
+    	 
+    	return $this;
     }
 /**
  * Returns document by the specified docid from the specified
@@ -146,9 +178,9 @@ class HeadCouchDocument
     	} elseif ($revs_info) {
     		$qs = "?revs_info=true";
     	}
-        $this->http->setMethod("GET")->request($this->db . "/" . $this->document . $qs);
+        $this->transport->setMethod("GET")->request($this->db . "/" . $this->document . $qs);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Returns double quoted document’s revision token
@@ -172,22 +204,21 @@ class HeadCouchDocument
  */
     public function head()
     {
-    	$this->http->setMethod("HEAD")->request($this->db . "/" . $this->document);
+    	$this->transport->setMethod("HEAD")->request($this->db . "/" . $this->document);
     
-    	return json_encode($this->http->getResponseHeaders());
+    	return json_encode($this->transport->getResponseHeaders());
     }
 /**
  * Returns new instance of the HeadCouchDocument
  *
+ * @param object $transport
  * @param string $db
  * @param string $document
- * @param string $host
- * @param number $port
  * @return HeadCouchDocument
  */
-    static public function newInstance($db, $document=NULL, $host=NULL, $port=NULL)
+    static public function newInstance($transport, $db, $document=NULL)
     {
-        return new self($db, $document, $host, $port);
+        return new self($transport, $db, $document);
     }
 }
 ?>

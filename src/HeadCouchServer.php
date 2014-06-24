@@ -1,32 +1,30 @@
 <?php
 require_once "HeadCouchException.php";
-require_once "HeadCouchHttp.php";
 /**
  * CouchDB server wrapper
  *
- * @author Dimitar Ivnaov (http://twitter.com/DimitarIvanov)
+ * @author Dimitar Ivanov (http://twitter.com/DimitarIvanov)
  * @link http://github.com/riverside/HeadCouch
  * @license MIT
- * @version 0.1.0
+ * @version 0.1.1
  * @package HeadCouch
  */
 class HeadCouchServer
 {
 /**
- * Instance of the HTTP client
+ * Instance of the transport
  *
  * @var mixed
  */
-    private $http;
+    private $transport;
 /**
  * Constructor
  *
- * @param string $host
- * @param number $port
+ * @param object $transport
  */
-    public function __construct($host=NULL, $port=NULL)
+    public function __construct($transport)
     {
-        $this->http = HeadCouchHttp::newInstance($host, $port);
+        $this->transport = $transport;
     }
 /**
  * List of running tasks, including the task type, name,
@@ -39,9 +37,9 @@ class HeadCouchServer
  */
     public function activeTasks()
     {
-        $this->http->setMethod("GET")->request("_active_tasks");
+        $this->transport->setMethod("GET")->request("_active_tasks");
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Returns a list of all the databases in the CouchDB instance.
@@ -50,9 +48,9 @@ class HeadCouchServer
  */
     public function allDbs()
     {
-        $this->http->setMethod("GET")->request("_all_dbs");
+        $this->transport->setMethod("GET")->request("_all_dbs");
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Returns a list of all database events in the CouchDB instance.
@@ -72,9 +70,9 @@ class HeadCouchServer
         $params['timeout'] = (int) $timeout;
         $params['heartbeat'] = $heartbeat;
         $qs = http_build_query($params);
-        $this->http->setMethod("GET")->request("_db_updates?".$qs);
+        $this->transport->setMethod("GET")->request("_db_updates?".$qs);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Gets the CouchDB log, equivalent to accessing the
@@ -86,20 +84,19 @@ class HeadCouchServer
  */
     public function log($bytes=1000, $offset=0)
     {
-        $this->http->setMethod("GET")->request("_log?bytes=".intval($bytes).'&offset='.intval($offset));
+        $this->transport->setMethod("GET")->request("_log?bytes=".intval($bytes).'&offset='.intval($offset));
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Returns new instance of the HeadCouchServer
  *
- * @param string $host
- * @param number $port
+ * @param object $transport
  * @return HeadCouchServer
  */
-    static public function newInstance($host=NULL, $port=NULL)
+    static public function newInstance($transport)
     {
-        return new self($host, $port);
+        return new self($transport);
     }
 /**
  * Accessing the root of a CouchDB instance returns meta
@@ -111,9 +108,9 @@ class HeadCouchServer
  */
     public function ping()
     {
-        $this->http->setMethod("GET")->request(NULL);
+        $this->transport->setMethod("GET")->request(NULL);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Restarts the CouchDB instance. You must be authenticated
@@ -123,9 +120,9 @@ class HeadCouchServer
  */
     public function restart()
     {
-        $this->http->setMethod("POST")->request("_restart");
+        $this->transport->setMethod("POST")->request("_restart");
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * The _stats resource returns a JSON object containing
@@ -139,9 +136,9 @@ class HeadCouchServer
  */
     public function stats()
     {
-        $this->http->setMethod("GET")->request("_stats");
+        $this->transport->setMethod("GET")->request("_stats");
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 /**
  * Requests one or more Universally Unique Identifiers
@@ -153,9 +150,9 @@ class HeadCouchServer
  */
     public function uuid($count=1)
     {
-        $this->http->setMethod("GET")->request("_uuids?count=" . (int) $count);
+        $this->transport->setMethod("GET")->request("_uuids?count=" . (int) $count);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
 }
 ?>

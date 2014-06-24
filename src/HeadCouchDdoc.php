@@ -1,15 +1,43 @@
 <?php
 require_once "HeadCouchException.php";
-require_once "HeadCouchHttp.php";
+/**
+ * CouchDB design document wrapper
+ *
+ * @author Dimitar Ivanov (http://twitter.com/DimitarIvanov)
+ * @link http://github.com/riverside/HeadCouch
+ * @license MIT
+ * @version 0.1.1
+ * @package HeadCouch
+ */
 class HeadCouchDdoc
 {
+/**
+ * Database name
+ *
+ * @var string
+ */
 	private $db;
-	
+/**
+ * Document ID
+ *
+ * @var string
+ */
 	private $document;
-	
-	private $http;
-	
-	public function __construct($db, $document=NULL, $host=NULL, $port=NULL)
+/**
+ * Instance of the transport
+ *
+ * @var mixed
+ */
+	private $transport;
+/**
+ * Constructor
+ *
+ * @param object $transport
+ * @param string $db
+ * @param string $document
+ * @throws HeadCouchException
+ */
+	public function __construct($transport, $db, $document=NULL)
 	{
 		if (empty($db))
 		{
@@ -21,9 +49,16 @@ class HeadCouchDdoc
 		}
 		$this->db = $db;
 		$this->document = $document;
-		$this->http = HeadCouchHttp::newInstance($host, $port);
+		$this->transport = $transport;
 	}
-	
+/**
+ * Deletes the specified document from the database. You
+ * must supply the current (latest) revision, either by
+ * using the $revision parameter to specify the revision.
+ *
+ * @param string $revision
+ * @param boolean $batch
+ */
 	public function delete($revision=NULL, $batch=FALSE)
     {
         if (empty($revision))
@@ -35,11 +70,20 @@ class HeadCouchDdoc
         {
         	$qs .= "&batch=ok";
         }
-        $this->http->setMethod('DELETE')->request($this->db . "/_design/" . $this->document . $qs);
+        $this->transport->setMethod('DELETE')->request($this->db . "/_design/" . $this->document . $qs);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
-	
+/**
+ * Returns design document with the specified design document`
+ * from the specified database. Unless you request a specific
+ * revision, the latest revision of the document will always
+ * be returned.
+ *
+ * @param string $rev
+ * @param boolean $revs
+ * @param boolean $revs_info
+ */
 	public function get($rev=NULL, $revs=FALSE, $revs_info=FALSE)
     {
     	$qs = NULL;
@@ -51,35 +95,56 @@ class HeadCouchDdoc
     	} elseif ($revs_info) {
     		$qs = "?revs_info=true";
     	}
-        $this->http->setMethod("GET")->request($this->db . "/_design/" . $this->document . $qs);
+        $this->transport->setMethod("GET")->request($this->db . "/_design/" . $this->document . $qs);
 
-        return $this->http->getResponse();
+        return $this->transport->getResponse();
     }
-	
+/**
+ * Returns double quoted document’s revision token
+ *
+ * @return string
+ */
     public function getRevision()
     {
     	$headers = $this->head();
     
     	return $headers->etag;
     }
-    
+/**
+ * Returns the HTTP Headers containing a minimal amount
+ * of information about the specified design document.
+ *
+ * @return string
+ */
 	public function head()
 	{
-		$this->http->setMethod("HEAD")->request($this->db . "/_design/" . $this->document);
+		$this->transport->setMethod("HEAD")->request($this->db . "/_design/" . $this->document);
 	
-		return json_encode($this->http->getResponseHeaders());
+		return json_encode($this->transport->getResponseHeaders());
 	}
-	
+/**
+ * The PUT method creates a new named design document,
+ * or creates a new revision of the existing design document.
+ *
+ * @param unknown $data
+ */
 	public function put($data)
 	{
-		$this->http->setMethod("PUT")->setData($data)->request($this->db . "/_design/" . $this->document);
+		$this->transport->setMethod("PUT")->setData($data)->request($this->db . "/_design/" . $this->document);
 	
-		return $this->http->getResponse();
+		return $this->transport->getResponse();
 	}
-	
-	static public function newInstance($db, $document=NULL, $host=NULL, $port=NULL)
+/**
+ * Returns new instance of the HeadCouchDdoc
+ *
+ * @param object $transport
+ * @param string $db
+ * @param string $document
+ * @return HeadCouchDdoc
+ */
+	static public function newInstance($transport, $db, $document=NULL)
 	{
-		return new self($db, $document, $host, $port);
+		return new self($transport, $db, $document);
 	}
 }
 ?>
