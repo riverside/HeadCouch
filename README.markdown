@@ -2,7 +2,7 @@
 
 #### CouchDB PHP client
 
-Version 0.1.0
+Version 0.1.1
 
 http://zinoui.com/
 
@@ -11,29 +11,36 @@ http://zinoui.com/
 <?php
 require_once 'HeadCouch.php';
 
+$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+	->setUsername('my_username')
+	->setPassword('my_password')
+;
+
+$server = HeadCouchServer::newInstance($transport);
+
 // Accessing the root of a CouchDB instance
-$result = HeadCouchServer::newInstance()->ping();
+$result = $server->ping();
 
 // Requests a Universally Unique Identifier from the CouchDB instance
-$result = HeadCouchServer::newInstance()->uuid();
+$result = $server->uuid();
 
 // Returns a list of all the databases
-$result = HeadCouchServer::newInstance()->allDbs();
+$result = $server->allDbs();
 
 // List of running tasks
-$result = HeadCouchServer::newInstance()->activeTasks();
+$result = $server->activeTasks();
 
 // Returns a list of all database events in the CouchDB instance
-$result = HeadCouchServer::newInstance()->dbUpdates();
+$result = $server->dbUpdates();
 
 // Gets the CouchDB log
-$result = HeadCouchServer::newInstance()->log();
+$result = $server->log();
 
 // Restarts the CouchDB instance
-$result = HeadCouchServer::newInstance()->restart();
+$result = $server->restart();
 
 // Returns the statistics for the running server
-$result = HeadCouchServer::newInstance()->stats();
+$result = $server->stats();
 ?>
 ```
 #### Database
@@ -41,20 +48,27 @@ $result = HeadCouchServer::newInstance()->stats();
 <?php
 require_once 'HeadCouch.php';
 
+$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+	->setUsername('my_username')
+	->setPassword('my_password')
+;
+
+$database = HeadCouchDatabase::newInstance($transport, 'db_name');
+
 // Create database
-$result = HeadCouchDatabase::newInstance('db_name')->create();
+$result = $database->create();
 
 // Delete database
-$result = HeadCouchDatabase::newInstance('db_name')->delete();
+$result = $database->delete();
 
 // Gets information about the specified database
-$result = HeadCouchDatabase::newInstance('db_name')->get();
+$result = $database->get();
 
 // Returns the HTTP Headers about the specified database
-$result = HeadCouchDatabase::newInstance('db_name')->head();
+$result = $database->head();
 
 // Creates a new document in the specified database
-$result = HeadCouchDatabase::newInstance('db_name')->post(array(
+$result = $database->post(array(
     'key1' => 'val1', 
     'key2' => 'val2'
 ));
@@ -65,22 +79,29 @@ $result = HeadCouchDatabase::newInstance('db_name')->post(array(
 <?php
 require_once 'HeadCouch.php';
 
+$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+	->setUsername('my_username')
+	->setPassword('my_password')
+;
+
+$document = HeadCouchDocument::newInstance($transport, 'db_name', 'doc_name');
+
 // Creates a new document
-$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->create(array(
+$result = $document->create(array(
     'key1' => 'val1', 
     'key2' => 'val2'
 ));
 
 // Deletes the specified document from the database
-$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->delete();
+$result = $document->delete();
 
 // Returns document
-$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->get();
+$result = $document->get();
 
 // Returns document's revision token
-$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->getRevision();
+$result = $document->getRevision();
 
 // Returns the HTTP Headers about the specified document
-$result = HeadCouchDocument::newInstance('db_name', 'doc_name')->head();
+$result = $document->head();
 ?>
 ```
