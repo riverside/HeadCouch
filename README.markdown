@@ -11,7 +11,7 @@ http://zinoui.com/
 <?php
 require_once 'HeadCouch.php';
 
-$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+$transport = HeadCouchCurl::newInstance('127.0.0.1', 5984)
 	->setUsername('my_username')
 	->setPassword('my_password')
 ;
@@ -48,7 +48,7 @@ $result = $server->stats();
 <?php
 require_once 'HeadCouch.php';
 
-$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+$transport = HeadCouchCurl::newInstance('127.0.0.1', 5984)
 	->setUsername('my_username')
 	->setPassword('my_password')
 ;
@@ -79,7 +79,7 @@ $result = $database->post(array(
 <?php
 require_once 'HeadCouch.php';
 
-$transport = HeadCouchSocket::newInstance('127.0.0.1', 5984)
+$transport = HeadCouchCurl::newInstance('127.0.0.1', 5984)
 	->setUsername('my_username')
 	->setPassword('my_password')
 ;
