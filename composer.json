@@ -1,0 +1,22 @@
+{
+    "name": "riverside/HeadCouch",
+    "description": "CouchDB PHP Client",
+    "type": "library",
+    "version": "0.1.1",
+    "keywords": ["headcouch", "couchdb", "php", "client", "nosql"],
+    "homepage": "https://github.com/riverside/HeadCouch",
+    "license": "MIT",
+    "authors": {
+        "name": "Dimitar Ivanov",
+        "email": "info@zinoui.com",
+        "homepage": "http://zinoui.com",
+        "role": "Developer"
+    },
+    "require: {
+        "php": ">=5.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
