@@ -6,12 +6,14 @@
     "keywords": ["headcouch", "couchdb", "php", "client", "nosql"],
     "homepage": "https://github.com/riverside/HeadCouch",
     "license": "MIT",
-    "authors": {
-        "name": "Dimitar Ivanov",
-        "email": "info@zinoui.com",
-        "homepage": "http://zinoui.com",
-        "role": "Developer"
-    },
+    "authors": [
+        {
+            "name": "Dimitar Ivanov",
+            "email": "info@zinoui.com",
+            "homepage": "http://zinoui.com",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=5.0",
         "ext-curl": "*"
