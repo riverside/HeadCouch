@@ -12,7 +12,7 @@
         "homepage": "http://zinoui.com",
         "role": "Developer"
     },
-    "require: {
+    "require": {
         "php": ">=5.0",
         "ext-curl": "*"
     },
