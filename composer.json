@@ -1,5 +1,5 @@
 {
-    "name": "riverside/HeadCouch",
+    "name": "riverside/head-couch",
     "description": "CouchDB PHP Client",
     "type": "library",
     "version": "0.1.1",
