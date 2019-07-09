@@ -1,26 +1,34 @@
 <?php
 if (isset($_GET['do']))
 {
-	include '../src/HeadCouch.php';
+	include '../src/autoload.php';
 	
-	$data = array('key1'=>'val1', 'key2' => 'val2', 'key3' => 'val3');
-	
-	$transport = HeadCouchSocket::newInstance($_GET['host'], $_GET['port'])
+	$data = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
+
+	$transport = \HeadCouch\Transport\Socket::newInstance($_GET['host'], $_GET['port'])
 		->setUsername($_GET['user'])
 		->setPassword($_GET['pswd'])
 	;
+
+    /*$transport = \HeadCouch\Transport\Curl::newInstance($_GET['host'], $_GET['port'])
+        ->setUsername($_GET['user'])
+        ->setPassword($_GET['pswd'])
+    ;*/
 	
-	$server = HeadCouchServer::newInstance($transport);
-	
-	if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb')))
-	{
-		$database = HeadCouchDatabase::newInstance($transport, @$_GET['dbName']);
-	}
-	
-	if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb', 'createDoc', 'deleteDoc', 'getDoc', 'getDocRev', 'headDoc')))
-	{
-		$document = HeadCouchDocument::newInstance($transport, @$_GET['dbName'], @$_GET['docName']);
-	}
+	$server = \HeadCouch\Server::newInstance($transport);
+
+	try {
+        if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb', 'designDocs'))) {
+            $database = \HeadCouch\Database::newInstance($transport, @$_GET['dbName']);
+        }
+
+        if (in_array($_GET['do'], array('createDb', 'deleteDb', 'getDb', 'headDb', 'postDb', 'createDoc', 'deleteDoc', 'getDoc', 'getDocRev', 'headDoc'))) {
+            $document = \HeadCouch\Document::newInstance($transport, @$_GET['dbName'], @$_GET['docName']);
+        }
+    } catch (\HeadCouch\Exception $e) {
+	    echo "Error: " . $e->getMessage();
+	    exit;
+    }
 	
 	switch ($_GET['do'])
 	{
@@ -34,6 +42,18 @@ if (isset($_GET['do']))
 		case 'allDbs':
 			$r = $server->allDbs();
 			break;
+        case 'membership':
+            $r = $server->membership();
+            break;
+        case 'clusterSetup':
+            $r = $server->clusterSetup();
+            break;
+        case 'dbsInfo':
+            $r = $server->dbsInfo(array($_GET['dbName'], '_users'));
+            break;
+        case 'up':
+            $r = $server->up();
+            break;
 		case 'activeTasks':
 			$r = $server->activeTasks();
 			break;
@@ -65,6 +85,9 @@ if (isset($_GET['do']))
 		case 'postDb':
 			$r = $database->post($data);
 			break;
+        case 'designDocs':
+            $r = $database->designDocs();
+            break;
 		# Document
 		case 'createDoc':
 			$r = $document->create($data);
@@ -84,10 +107,14 @@ if (isset($_GET['do']))
 	}
 	
 	?><a href="<?php echo $_SERVER['PHP_SELF']; ?>">Return back</a><?php
-	
-	echo '<pre>';
-	print_r(json_decode($r));
-	echo '</pre>';
+
+    if ($r instanceof \HeadCouch\Response) {
+        echo '<pre>';
+        print_r($r->toArray());
+        echo '</pre>';
+    } elseif (is_string($r)) {
+        echo $r;
+    }
 	exit;
 }
 ?>
@@ -142,8 +169,20 @@ if (isset($_GET['do']))
 					<label><input type="radio" name="do" value="activeTasks" /> activeTasks <span class="info">List of running tasks, including the task type, name, status and process ID.</span></label>
 				</p>
 				<p>
-					<label><input type="radio" name="do" value="allDbs" /> allDbs <span class="info">Returns a list of all the databases in the CouchDB instance.</span></label>
-				</p>
+                    <label><input type="radio" name="do" value="allDbs" /> allDbs <span class="info">Returns a list of all the databases in the CouchDB instance.</span></label>
+                </p>
+                <p>
+                    <label><input type="radio" name="do" value="membership" /> membership <span class="info">Displays the nodes that are part of the cluster as <code>cluster_nodes</code></span></label>
+                </p>
+                <p>
+                    <label><input type="radio" name="do" value="clusterSetup" /> clusterSetup <span class="info">Returns the status of the node or cluster, per the cluster setup wizard.</span></label>
+                </p>
+                <p>
+                    <label><input type="radio" name="do" value="dbsInfo" /> dbsInfo <span class="info">Returns information of a list of the specified databases in the CouchDB instance.</span></label>
+                </p>
+                <p>
+                    <label><input type="radio" name="do" value="up" /> up <span class="info">Confirms that the server is up, running, and ready to respond to requests.</span></label>
+                </p>
 				<p>
 					<input type="submit" value="Submit" />
 				</p>
@@ -165,6 +204,9 @@ if (isset($_GET['do']))
 				<p>
 					<label><input type="radio" name="do" value="postDb" /> Post database <span class="info">Creates a new document in the specified database, using the supplied JSON document structure.</span></label>
 				</p>
+                <p>
+                    <label><input type="radio" name="do" value="designDocs" /> Get structure <span class="info">Returns a structure of all of the design documents in a given database.</span></label>
+                </p>
 				<p>
 					<input type="submit" value="Submit" />
 				</p>
