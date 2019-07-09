@@ -15,10 +15,13 @@
         }
     ],
     "require": {
-        "php": ">=5.0",
-        "ext-curl": "*"
+        "php": ">=7.0",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4": {
+            "PhpWaf\\": "src/"
+        }
     }
 }
