@@ -16,19 +16,19 @@ class Design
  *
  * @var string
  */
-	private $db;
+    protected $db;
 /**
  * Document ID
  *
  * @var string
  */
-	private $document;
+    protected $document;
 /**
  * Instance of the transport
  *
  * @var mixed
  */
-	private $transport;
+    protected $transport;
 /**
  * Constructor
  *

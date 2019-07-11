@@ -23,7 +23,12 @@ class Socket extends Transport
 		$url = 'http://' . $this->host . ':' . $this->port . '/' . $url;
 		$parts = parse_url($url);
         $out = "";
-		$fp = fsockopen($this->host, $this->port, $errno, $errstr, $this->connectTimeout);
+        if (function_exists("stream_socket_client"))
+        {
+            $fp = stream_socket_client("tcp://$this->host:$this->port", $errno, $errstr, $this->connectTimeout);
+        } else {
+            $fp = fsockopen($this->host, $this->port, $errno, $errstr, $this->connectTimeout);
+        }
 		if (!$fp)
 		{
 			$this->error = array('code' => $errno, 'text' => $errstr);

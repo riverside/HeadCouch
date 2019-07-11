@@ -16,7 +16,7 @@ class Server
  *
  * @var mixed
  */
-    private $transport;
+    protected $transport;
 /**
  * Constructor
  *

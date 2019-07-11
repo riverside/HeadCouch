@@ -16,13 +16,13 @@ class Database
  *
  * @var string
  */
-    private $db;
+    protected $db;
 /**
  * Instance of the Transport
  *
  * @var Transport
  */
-    private $transport;
+    protected $transport;
 /**
  * Constructor
  *
@@ -80,19 +80,40 @@ class Database
         return $this->transport->getResponse();
     }
 /**
+ * Returns a JSON structure of all of the design documents in a given database.
  *
- *
+ * @param array|NULL $keys
  * @param array|NULL $params
  * @return Response
  */
-    public function designDocs(array $params=NULL): Response
+    public function designDocs(array $keys=NULL, array $params=NULL): Response
     {
-        $qs = NULL;
-        if ($params)
+        if (!$keys)
         {
-            $qs = "?" . http_build_query($params, '', '&');
+            $tmp = array();
+            if ($params)
+            {
+                foreach ($params as $key => $value)
+                {
+                    if (in_array($key, array(
+                        'conflicts', 'descending', 'endkey', 'end_key', 'endkey_docid',
+                        'end_key_doc_id', 'include_docs', 'inclusive_end', 'key', 'keys',
+                        'limit', 'skip', 'startkey', 'start_key', 'startkey_docid',
+                        'start_key_doc_id', 'update_seq')))
+                    {
+                        $tmp[$key] = Util::normalize($value);
+                    }
+                }
+            }
+            $qs = !$tmp ? NULL : "?" . http_build_query($tmp, '', '&');
+
+            $this->transport->setMethod('GET')->request($this->db . "/_design_docs" . $qs);
+        } else {
+            $this->transport
+                ->setMethod('POST')
+                ->setData(compact('keys'))
+                ->request($this->db . "/_design_docs");
         }
-        $this->transport->setMethod('GET')->request($this->db . "/_design_docs" . $qs);
 
         return $this->transport->getResponse();
     }
@@ -290,28 +311,32 @@ class Database
     	return $this->transport->getResponse();
     }
 /**
+ * Returns all of the documents in the database
  *
- * @param array $keys
- * @param array $params
+ * @param array|NULL $keys
+ * @param array|NULL $params
  * @return Response
  */
-    public function getAll($keys=array(), $params=array()): Response
+    public function getAll(array $keys=NULL, array $params=NULL): Response
     {
-    	if (empty($keys))
+    	if (!$keys)
     	{
     		$tmp = array();
-    		foreach ($params as $key => $value)
-    		{
-    			if (in_array($key, array(
-    					'conflicts','descending','endkey','end_key','endkey_docid',
-    					'end_key_doc_id','include_docs','inclusive_end','key','limit',
-    					'skip','stale','startkey','start_key','startkey_docid',
-    					'start_key_doc_id','update_seq')))
-    			{
-    				$tmp[$key] = $value;
-    			}
-    		}
-   			$qs = empty($tmp) ? NULL : "?" . http_build_query($tmp, '', '&');
+    		if ($params)
+            {
+                foreach ($params as $key => $value)
+                {
+                    if (in_array($key, array(
+                        'conflicts','descending','endkey','end_key','endkey_docid',
+                        'end_key_doc_id','include_docs','inclusive_end','key','limit',
+                        'skip','stale','startkey','start_key','startkey_docid',
+                        'start_key_doc_id','update_seq')))
+                    {
+                        $tmp[$key] = Util::normalize($value);
+                    }
+                }
+            }
+   			$qs = !$tmp ? NULL : "?" . http_build_query($tmp, '', '&');
     		
     		$this->transport->setMethod("GET")->request($this->db . "/_all_docs" . $qs);
     	} else {
