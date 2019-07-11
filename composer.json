@@ -19,9 +19,15 @@
         "ext-curl": "*",
         "ext-json": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "8"
+    },
     "autoload": {
         "psr-4": {
             "PhpWaf\\": "src/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }
