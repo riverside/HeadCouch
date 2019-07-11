@@ -7,22 +7,26 @@ Version 1.0.0
 http://zinoui.com/
 #### Loading
 ```php
-require_once '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 ```
 #### Transport
 - cURL
 ```php
 $transport = \HeadCouch\Curl::newInstance('127.0.0.1', 5984)
 	->setUsername('my_username')
-	->setPassword('my_password')
-;
+	->setPassword('my_password');
 ```
 - Socket
 ```php
 $transport = \HeadCouch\Socket::newInstance('127.0.0.1', 5984)
 	->setUsername('my_username')
-	->setPassword('my_password')
-;
+	->setPassword('my_password');
+```
+- File
+```php
+$transport = \HeadCouch\File::newInstance('127.0.0.1', 5984)
+	->setUsername('my_username')
+	->setPassword('my_password');
 ```
 #### Server
 ```php
