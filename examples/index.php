@@ -5,15 +5,17 @@ if (isset($_GET['do']))
 	
 	$data = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
 
-	$transport = \HeadCouch\Transport\Socket::newInstance($_GET['host'], $_GET['port'])
-		->setUsername($_GET['user'])
-		->setPassword($_GET['pswd'])
-	;
-
-    /*$transport = \HeadCouch\Transport\Curl::newInstance($_GET['host'], $_GET['port'])
+    $transport = \HeadCouch\Transport\File::newInstance($_GET['host'], $_GET['port'])
         ->setUsername($_GET['user'])
-        ->setPassword($_GET['pswd'])
-    ;*/
+        ->setPassword($_GET['pswd']);
+
+	/*$transport = \HeadCouch\Transport\Socket::newInstance($_GET['host'], $_GET['port'])
+		->setUsername($_GET['user'])
+		->setPassword($_GET['pswd']);
+
+    $transport = \HeadCouch\Transport\Curl::newInstance($_GET['host'], $_GET['port'])
+        ->setUsername($_GET['user'])
+        ->setPassword($_GET['pswd']);*/
 	
 	$server = \HeadCouch\Server::newInstance($transport);
 
