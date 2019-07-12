@@ -11,32 +11,32 @@ namespace HeadCouch;
  */
 class Document
 {
-/**
- * Database name
- *
- * @var string
- */
+    /**
+     * Database name
+     *
+     * @var string
+     */
     protected $db;
-/**
- * Document ID
- *
- * @var string
- */
+    /**
+     * Document ID
+     *
+     * @var string
+     */
     protected $document;
-/**
- * Instance of the transport
- *
- * @var mixed
- */
+    /**
+     * Instance of the transport
+     *
+     * @var mixed
+     */
     protected $transport;
-/**
- * Document constructor.
- *
- * @param Transport $transport
- * @param string $db
- * @param string|NULL $document
- * @throws Exception
- */
+    /**
+     * Document constructor.
+     *
+     * @param Transport $transport
+     * @param string $db
+     * @param string|NULL $document
+     * @throws Exception
+     */
     public function __construct(Transport $transport, string $db, string $document=NULL)
     {
         if (empty($db))
@@ -51,19 +51,19 @@ class Document
         $this->document = $document;
         $this->transport = $transport;
     }
-/**
- * The COPY (which is non-standard HTTP) copies an existing
- * document to a new or existing document.
- *
- * The source document is specified on the request line,
- * with the Destination header of the request specifying
- * the target document.
- *
- * @param string $dest
- * @param string $revision
- * @param boolean $batch
- * @return Response
- */
+    /**
+     * The COPY (which is non-standard HTTP) copies an existing
+     * document to a new or existing document.
+     *
+     * The source document is specified on the request line,
+     * with the Destination header of the request specifying
+     * the target document.
+     *
+     * @param string $dest
+     * @param string $revision
+     * @param boolean $batch
+     * @return Response
+     */
     public function copy(string $dest, string $revision=NULL, bool $batch=FALSE): Response
     {
     	if (empty($revision))
@@ -82,16 +82,16 @@ class Document
     	
     	return $this->transport->getResponse();
     }
-/**
- * The PUT method creates a new named document, or creates
- * a new revision of the existing document. Unlike the
- * POST /{db} method, you must specify the document ID
- * in the request URL.
- *
- * @param array $data
- * @param boolean $batch
- * @return Response
- */
+    /**
+     * The PUT method creates a new named document, or creates
+     * a new revision of the existing document. Unlike the
+     * POST /{db} method, you must specify the document ID
+     * in the request URL.
+     *
+     * @param array $data
+     * @param boolean $batch
+     * @return Response
+     */
     public function create($data, bool $batch=NULL): Response
     {
     	$qs = NULL;
@@ -103,12 +103,12 @@ class Document
     
     	return $this->transport->getResponse();
     }
-/**
- * Get/set database name
- *
- * @param string $dbName
- * @return string|Document
- */
+    /**
+     * Get/set database name
+     *
+     * @param string $dbName
+     * @return string|Document
+     */
     public function db($dbName=NULL)
     {
     	if (is_null($dbName))
@@ -120,15 +120,15 @@ class Document
     	 
     	return $this;
     }
-/**
- * Deletes the specified document from the database. You
- * must supply the current (latest) revision, either by
- * using the rev parameter to specify the revision.
- *
- * @param string $revision
- * @param boolean $batch
- * @return Response
- */
+    /**
+     * Deletes the specified document from the database. You
+     * must supply the current (latest) revision, either by
+     * using the rev parameter to specify the revision.
+     *
+     * @param string $revision
+     * @param boolean $batch
+     * @return Response
+     */
     public function delete(string $revision=NULL, bool $batch=FALSE): Response
     {
         if (empty($revision))
@@ -144,12 +144,12 @@ class Document
 
         return $this->transport->getResponse();
     }
-/**
- * Get/set document name
- *
- * @param string $docName
- * @return string|Document
- */
+    /**
+     * Get/set document name
+     *
+     * @param string $docName
+     * @return string|Document
+     */
     public function doc($docName=NULL)
     {
     	if (is_null($docName))
@@ -161,16 +161,16 @@ class Document
     	 
     	return $this;
     }
-/**
- * Returns document by the specified docid from the specified
- * db. Unless you request a specific revision, the latest
- * revision of the document will always be returned.
- *
- * @param string $rev
- * @param boolean $revs
- * @param boolean $revs_info
- * @return Response
- */
+    /**
+     * Returns document by the specified docid from the specified
+     * db. Unless you request a specific revision, the latest
+     * revision of the document will always be returned.
+     *
+     * @param string $rev
+     * @param boolean $revs
+     * @param boolean $revs_info
+     * @return Response
+     */
     public function get(string $rev=NULL, bool $revs=FALSE, bool $revs_info=FALSE): Response
     {
     	$qs = NULL;
@@ -186,41 +186,42 @@ class Document
 
         return $this->transport->getResponse();
     }
-/**
- * Returns double quoted document’s revision token
- *
- * @return string
- */
+    /**
+     * Returns double quoted document’s revision token
+     *
+     * @return string
+     */
     public function getRevision()
     {
         $headers = $this->head()->toArray();
 
         return $headers['etag'];
     }
-/**
- * Returns the HTTP Headers containing a minimal amount of
- * information about the specified document. The method
- * supports the same query arguments as the GET /{db}/{docid}
- * method, but only the header information (including document
- * size, and the revision as an ETag), is returned.
- *
- * @return mixed
- */
+    /**
+     * Returns the HTTP Headers containing a minimal amount of
+     * information about the specified document. The method
+     * supports the same query arguments as the GET /{db}/{docid}
+     * method, but only the header information (including document
+     * size, and the revision as an ETag), is returned.
+     *
+     * @return mixed
+     */
     public function head()
     {
     	$this->transport->setMethod("HEAD")->request($this->db . "/" . $this->document);
     
     	return $this->transport->getResponseHeaders();
     }
-/**
- * Returns new instance of the Document
- *
- * @param Transport $transport
- * @param string $db
- * @param string $document
- * @return Document
- * @throws Exception
- */
+
+    /**
+     * Returns new instance of the Document
+     *
+     * @param Transport $transport
+     * @param string $db
+     * @param string $document
+     * @return Document
+     * @throws Exception
+     */
     static public function newInstance(Transport $transport, string $db, string $document=NULL): self
     {
         return new self($transport, $db, $document);

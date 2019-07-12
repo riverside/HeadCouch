@@ -1,11 +1,9 @@
 <?php
-spl_autoload_register(function ($className)
-{
+spl_autoload_register(function ($className) {
     $prefix = "HeadCouch\\";
 
     $length = strlen($prefix);
-    if (strncmp($prefix, $className, $length) !== 0)
-    {
+    if (strncmp($prefix, $className, $length) !== 0) {
         return;
     }
 
@@ -14,8 +12,7 @@ spl_autoload_register(function ($className)
         DIRECTORY_SEPARATOR,
         str_replace('\\', DIRECTORY_SEPARATOR, substr($className, $length)));
 
-    if (file_exists($filename))
-    {
+    if (file_exists($filename)) {
         require $filename;
     }
 });

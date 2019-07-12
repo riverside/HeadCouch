@@ -1,6 +1,15 @@
 <?php
-namespace HeadCouch;
 
+namespace HeadCouch;
+/**
+ * CouchDB response class
+ *
+ * @author Dimitar Ivanov (http://twitter.com/DimitarIvanov)
+ * @link http://github.com/riverside/HeadCouch
+ * @license MIT
+ * @version 1.0.0
+ * @package HeadCouch
+ */
 class Response
 {
     /**
@@ -13,7 +22,7 @@ class Response
      *
      * @param string $response
      */
-    public function __construct(string $response="")
+    public function __construct(string $response = "")
     {
         $this->response = $response;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace HeadCouch;
 
 use PHPUnit\Framework\TestCase;

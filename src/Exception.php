@@ -1,4 +1,5 @@
 <?php
+
 namespace HeadCouch;
 /**
  * CouchDB exception wrapper
@@ -11,5 +12,5 @@ namespace HeadCouch;
  */
 class Exception extends \Exception
 {
-	
+
 }
