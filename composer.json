@@ -2,7 +2,7 @@
     "name": "riverside/head-couch",
     "description": "CouchDB PHP Client",
     "type": "library",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "keywords": ["headcouch", "couchdb", "php", "client", "nosql"],
     "homepage": "https://github.com/riverside/HeadCouch",
     "license": "MIT",
