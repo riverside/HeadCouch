@@ -3,8 +3,6 @@
 
 #### CouchDB PHP client
 
-Version 1.0.0
-
 http://zinoui.com/
 #### Loading
 ```php
