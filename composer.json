@@ -10,7 +10,7 @@
         {
             "name": "Dimitar Ivanov",
             "email": "info@zinoui.com",
-            "homepage": "http://zinoui.com",
+            "homepage": "https://zinoui.com",
             "role": "Developer"
         }
     ],
@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpWaf\\": "src/"
+            "HeadCouch\\": "src/"
         }
     },
     "scripts": {
