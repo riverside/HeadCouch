@@ -3,7 +3,7 @@
 
 #### CouchDB PHP client
 
-http://zinoui.com/
+https://zinoui.com/
 #### Loading
 ```php
 require __DIR__ . '/vendor/autoload.php';
