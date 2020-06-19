@@ -5,17 +5,17 @@ if (isset($_GET['do']))
 	
 	$data = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
 
-    $transport = \HeadCouch\Transport\File::newInstance($_GET['host'], $_GET['port'])
+    /*$transport = \HeadCouch\Transport\File::newInstance($_GET['host'], $_GET['port'])
         ->setUsername($_GET['user'])
-        ->setPassword($_GET['pswd']);
+        ->setPassword($_GET['pswd']);*/
 
 	/*$transport = \HeadCouch\Transport\Socket::newInstance($_GET['host'], $_GET['port'])
 		->setUsername($_GET['user'])
-		->setPassword($_GET['pswd']);
+		->setPassword($_GET['pswd']);*/
 
     $transport = \HeadCouch\Transport\Curl::newInstance($_GET['host'], $_GET['port'])
         ->setUsername($_GET['user'])
-        ->setPassword($_GET['pswd']);*/
+        ->setPassword($_GET['pswd']);
 	
 	$server = \HeadCouch\Server::newInstance($transport);
 
@@ -70,6 +70,18 @@ if (isset($_GET['do']))
 			break;
 		case 'stats':
 			$r = $server->stats();
+			break;
+		case 'favicon':
+			$r = $server->favicon();
+			break;
+		case 'reshard':
+			$r = $server->reshard();
+			break;
+		case 'schedulerDocs':
+			$r = $server->schedulerDocs();
+			break;
+		case 'schedulerJobs':
+			$r = $server->schedulerJobs();
 			break;
 		# Database
 		case 'createDb':
@@ -184,6 +196,18 @@ if (isset($_GET['do']))
                 </p>
                 <p>
                     <label><input type="radio" name="do" value="up" /> up <span class="info">Confirms that the server is up, running, and ready to respond to requests.</span></label>
+                </p>
+				<p>
+                    <label><input type="radio" name="do" value="favicon" /> favicon <span class="info">Binary content for the favicon.ico site icon.</span></label>
+                </p>
+				<p>
+                    <label><input type="radio" name="do" value="reshard" /> reshard <span class="info">Returns a count of completed, failed, running, stopped, and total jobs along with the state of resharding on the cluster.</span></label>
+                </p>
+				<p>
+                    <label><input type="radio" name="do" value="schedulerDocs" /> schedulerDocs <span class="info">List of replication document states.</span></label>
+                </p>
+				<p>
+                    <label><input type="radio" name="do" value="schedulerJobs" /> schedulerJobs <span class="info">List of replication jobs.</span></label>
                 </p>
 				<p>
 					<input type="submit" value="Submit" />
