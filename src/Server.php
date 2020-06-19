@@ -106,6 +106,13 @@ class Server
         return $this->transport->getResponse();
     }
 
+    public function favicon()
+    {
+        $this->transport->setMethod("GET")->addHeader("Accept: image/x-icon")->request("favicon.ico");
+
+        return $this->transport->getResponse();
+    }
+
     /**
      * Gets the CouchDB log, equivalent to accessing the
      * local log file of the corresponding CouchDB instance.
@@ -162,6 +169,19 @@ class Server
     }
 
     /**
+     * Returns a count of completed, failed, running, stopped, 
+     * and total jobs along with the state of resharding on 
+     * the cluster.
+     * @return Response
+     */
+    public function reshard(): Response
+    {
+        $this->transport->setMethod("GET")->request("_reshard");
+
+        return $this->transport->getResponse();
+    }
+
+    /**
      * Restarts the CouchDB instance. You must be authenticated
      * as a user with administration privileges for this to work.
      *
@@ -170,6 +190,71 @@ class Server
     public function restart(): Response
     {
         $this->transport->setMethod("POST")->request("_restart");
+
+        return $this->transport->getResponse();
+    }
+
+    /**
+     * List of replication document states. Includes information about 
+     * all the documents, even in completed and failed states. For each 
+     * document it returns the document ID, the database, the replication
+     * ID, source and target, and other information.
+     * 
+     * @param int $limit How many results to return
+     * @param int $skip How many result to skip starting at the beginning, if ordered by document ID
+     * @return Response
+     */
+    public function schedulerDocs(int $limit=null, int $skip=null): Response
+    {
+        $params = array();
+        if ($limit !== null && is_numeric($limit))
+        {
+            $params['limit'] = (int) $limit;
+        }
+        if ($skip !== null && is_numeric($skip))
+        {
+            $params['skip'] = (int) $skip;
+        }
+        $qs = null;
+        if ($params)
+        {
+            $qs = '?' . http_build_query($params, '', '&');
+        }
+        $this->transport->setMethod("GET")->request("_scheduler/docs" . $qs);
+
+        return $this->transport->getResponse();
+    }
+
+    /**
+     * List of replication jobs. Includes replications created via
+     * /_replicate endpoint as well as those created from replication 
+     * documents. Does not include replications which have completed 
+     * or have failed to start because replication documents were 
+     * malformed. Each job description will include source and target 
+     * information, replication id, a history of recent event, and a 
+     * few other things.
+     * 
+     * @param int $limit How many results to return
+     * @param int $skip How many result to skip starting at the beginning, ordered by replication ID
+     * @return Response
+     */
+    public function schedulerJobs(int $limit=null, int $skip=null): Response
+    {
+        $params = array();
+        if ($limit !== null && is_numeric($limit))
+        {
+            $params['limit'] = (int) $limit;
+        }
+        if ($skip !== null && is_numeric($skip))
+        {
+            $params['skip'] = (int) $skip;
+        }
+        $qs = null;
+        if ($params)
+        {
+            $qs = '?' . http_build_query($params, '', '&');
+        }
+        $this->transport->setMethod("GET")->request("_scheduler/jobs" . $qs);
 
         return $this->transport->getResponse();
     }
