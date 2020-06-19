@@ -37,6 +37,7 @@ class Socket extends Transport
             $data = $this->getData();
             $this->addHeader("X-HTTP-Method-Override: " . strtoupper($this->method));
             $this->addHeader("Content-Type: application/json");
+            $this->addHeader("Accept: application/json");
             switch (strtoupper($this->method)) {
                 case 'GET':
                     $out = "GET " . $parts['path'] . (isset($parts['query']) ? "?" . $parts['query'] : NULL) . " HTTP/1.1\r\n";

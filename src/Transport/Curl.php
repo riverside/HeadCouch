@@ -45,6 +45,7 @@ class Curl extends Transport
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($this->method));
         $this->addHeader("X-HTTP-Method-Override: " . strtoupper($this->method));
         $this->addHeader("Content-Type: application/json");
+        $this->addHeader("Accept: application/json");
 
         switch (strtoupper($this->method)) {
             case "GET":
