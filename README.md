@@ -1,7 +1,9 @@
 # HeadCouch
-[![Build Status](https://api.travis-ci.org/riverside/HeadCouch.svg)](https://travis-ci.org/riverside/HeadCouch) [![Latest Stable Version](https://poser.pugx.org/riverside/head-couch/v/stable)](https://packagist.org/packages/riverside/head-couch) [![License](https://poser.pugx.org/riverside/head-couch/license)](https://packagist.org/packages/riverside/head-couch)
+CouchDB PHP client
 
-#### CouchDB PHP client
+| Build | Stable | License |
+| --- | --- | --- |
+| [![CI](https://github.com/riverside/HeadCouch/actions/workflows/test.yml/badge.svg)](https://github.com/riverside/HeadCouch/actions/workflows/test.yml) | [![Latest Stable Version](https://poser.pugx.org/riverside/head-couch/v/stable)](https://packagist.org/packages/riverside/head-couch) | [![License](https://poser.pugx.org/riverside/head-couch/license)](https://packagist.org/packages/riverside/head-couch) |
 
 #### Loading
 ```php
